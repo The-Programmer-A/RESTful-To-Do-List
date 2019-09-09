@@ -9,17 +9,16 @@ const path = require('path')
 const PORT = process.env.PORT || 5000
 
 
-
 express()
   .use(express.static(path.join(__dirname, 'public')))
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
   .get('/', (req, res) => res.render('pages/index'))
-  .get('/db', async (req, res) => {
+  .get('/db', async (req, res) => { // get all items in todo list
     try {
       const client = await pool.connect()
-      const result = await client.query('SELECT * FROM test_table');
-      const results = { 'results': (result) ? result.rows : null};
+      const result = await client.query('SELECT * FROM todo');
+      const results = { 'results': (result) ? result.rows : null}; //else { return res.send('No Data Found')}
       res.render('pages/db', results );
       client.release();
     } catch (err) {
@@ -27,5 +26,6 @@ express()
       res.send("Error " + err);
     }
   })
+  // Implement appropriate database calls for each API function of your RESTful web service.
   .get('/cool', (req, res) => res.send(cool()))
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
