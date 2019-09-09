@@ -17,7 +17,7 @@ express()
   .get('/db', async (req, res) => { // get all items in todo list
     try {
       const client = await pool.connect()
-      const result = await client.query('SELECT * FROM todo');
+      const result = await client.query('SELECT * FROM test_table');
       const results = { 'results': (result) ? result.rows : null}; //else { return res.send('No Data Found')}
       res.render('pages/db', results );
       client.release();
