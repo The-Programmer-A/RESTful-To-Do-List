@@ -117,6 +117,18 @@ $(document).ready(function(e) {
         });
       });
 
+      $('#test').on('click', function() {
+      $.ajax({
+        url: '/db',
+        method: 'GET',
+        contentType: 'application/json',
+        data: JSON.stringify({ task: taskName, name: uName }),
+        success: function (response) {
+          console.log('I think something happended: ' + taskName + " " + uName);
+          console.log(response);
+        }
+      });
+
       $('#edit-task').dialog({
         modal:true,
         autoOpen:false
