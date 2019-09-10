@@ -26,7 +26,7 @@ $(document).ready(function(e) {
           $newTask.hide();
           $('#todo-list').prepend($newTask);
           $newTask.show('clip',250).effect('highlight',1000);
-          //send the task and the username (optional)
+          //send the task and the user 
           $.ajax({
             url: '/items',
             method: 'POST',
@@ -115,18 +115,6 @@ $(document).ready(function(e) {
             }
           }
         });
-      });
-
-      $('#test').on('click', function() {
-      $.ajax({
-        url: '/db',
-        method: 'GET',
-        contentType: 'application/json',
-        data: JSON.stringify({ task: taskName, name: uName }),
-        success: function (response) {
-          console.log('I think something happended: ' + taskName + " " + uName);
-          console.log(response);
-        }
       });
 
       $('#edit-task').dialog({
