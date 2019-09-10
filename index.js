@@ -17,9 +17,10 @@ express()
     // get all items in todo list
     try {
       const client = await pool.connect();
-      const result = await client.query("INSERT INTO todo(item, username, status) VALUES('work','Armaan', '0');");
+      const result = await client.query("SELECT * FROM todo");
       const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
-      res.render("pages/db", results);
+      //res.render("db", results);
+      res.send(results);
       client.release();
     } catch (err) {
       console.error(err);
@@ -29,7 +30,8 @@ express()
   .post("/items", function(req, res) {
     //res.send("You are in the API call" + req.body.task + " " + req.body.name);
     try {
-      //const client = await pool.connect();
+      const client = await pool.connect();
+      res.send("You are in the API call" + req.body.task + " " + req.body.name);
       //const result = await client.query("SELECT * FROM todo");
       //const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
       //res.render("db", results);
