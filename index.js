@@ -56,12 +56,11 @@ express()
   .get("/test", function(req, res) {
     //res.send("You are in the API call" + req.body.task + " " + req.body.name);
     try {
-      const client = await pool.connect();
-      const result = await client.query("SELECT * FROM todo");
-      const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
-      res.send(results);
-      // res.render("db", results);
-      client.release();
+      //const client = await pool.connect();
+      //const result = await client.query("SELECT * FROM todo");
+      //const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
+      //res.render("db", results);
+      //client.release();
     } catch (err) {
       console.error(err);
       res.send("Error " + err);
