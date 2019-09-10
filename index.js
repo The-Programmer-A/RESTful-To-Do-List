@@ -32,7 +32,7 @@ express()
     var newName = req.body.name;
     try {
       const client = await pool.connect();
-      const result = await client.query("SELECT * FROM todo");
+      const result = await client.query("SELECT * FROM todo;");
       const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
       //res.render("db", results);
       res.send("first", results);
@@ -44,6 +44,7 @@ express()
       res.send("Error " + err);
     }
   })
+  //INSERT INTO todo(item, username, status) VALUES('something','Armaan', '0');
   // Implement appropriate database calls for each API function of your RESTful web service.
   .get("/cool", (req, res) => res.send(cool()))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
