@@ -26,14 +26,14 @@ $(document).ready(function(e) {
           $newTask.hide();
           $('#todo-list').prepend($newTask);
           $newTask.show('clip',250).effect('highlight',1000);
-          
+          //send the task and the username (optional) to db
           $.ajax({
             url: '/items',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ task: taskName, name: uName }),
             success: function (response) {
-              console.log('I think something happended' + taskName + " " + uName);
+              console.log('I think something happended: ' + taskName + " " + uName);
               console.log(response);
             }
           });
