@@ -28,11 +28,11 @@ express()
   })
   .post("/items", function(req, res) {
     res.send("You are in the API call");
-    // var newTask = req.body.task;
-    // var newName = req.body.name;
+    var newTask = req.body.task;
+    var newName = req.body.name;
     try {
       const client = await pool.connect();
-      const result = await client.query("INSERT INTO todo(item, username, status) VALUES(something, Armaan, '0'");
+      const result = await client.query("INSERT INTO todo(item, username, status) VALUES(" + newTask + "," + newName + ", " + '0'+ ");");
       const results = { results: result ? res.send("You are in the API call") : res.send('Incorrect') };
       client.release();
     } catch (err) {
