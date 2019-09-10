@@ -31,12 +31,11 @@ express()
     var newTask = req.body.task;
     var newName = req.body.name;
     try {
-      // const client = await pool.connect();
-      // const result = await client.query("INSERT INTO todo(item, username, status) VALUES( '" + newTask + "','" + newName + "', '" + "0"+ "');");
-      // //const results = { results: result ? res.send("You are in the API call") : res.send('Incorrect') };
-      // const results = { results: result ? result.rows : null };
-      // res.send(results);
-      // client.release();
+      const client = await pool.connect();
+      const result = await client.query("SELECT * FROM todo");
+      const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
+      res.render("db", results);
+      client.release();
     } catch (err) {
       console.error(err);
       res.send("Error " + err);
