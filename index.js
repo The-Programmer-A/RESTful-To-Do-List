@@ -30,19 +30,20 @@ express()
     res.send("You are in the API call");
     var newTask = req.body.task;
     var newName = req.body.name;
-    try {
-      const client = await pool.connect();
-      const result = await client.query("SELECT * FROM todo;");
-      //const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
-      //res.render("db", results);
-      res.send("first", results);
-      res.send("second", newTask);
-      res.send("third", newName);
-      client.release();
-    } catch (err) {
-      console.error(err);
-      res.send("Error " + err);
-    }
+    res.send("second", newTask);
+    res.send("third", newName);
+    // try {
+    //   const client = await pool.connect();
+    //   const result = await client.query("SELECT * FROM todo;");
+    //   //const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
+    //   //res.render("db", results);
+    //   res.send("first", results);
+    //   
+    //   client.release();
+    // } catch (err) {
+    //   console.error(err);
+    //   res.send("Error " + err);
+    // }
   })
   //INSERT INTO todo(item, username, status) VALUES('something','Armaan', '0');
   // Implement appropriate database calls for each API function of your RESTful web service.
