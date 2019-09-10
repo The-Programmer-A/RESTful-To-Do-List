@@ -27,7 +27,7 @@ express()
     }
   })
   .post("/items", function(req, res) {
-    res.send("You are in the API call" + req.bodyParser.task + " " + req.bodyParser.name);
+    res.send("You are in the API call" + req.body.task + " " + req.body.name);
   })
   //INSERT INTO todo(item, username, status) VALUES('something','Armaan', '0');
   // Implement appropriate database calls for each API function of your RESTful web service.
