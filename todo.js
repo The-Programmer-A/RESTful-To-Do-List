@@ -117,6 +117,36 @@ $(document).ready(function(e) {
         });
       });
 
+      $('#get-button').on('click', function () {
+        $.ajax({
+          url: '/items',
+          method: 'GET',
+          contentType: 'application/json',
+          success: function (response) {
+            console.log(response);
+            var todoList = $('#todo-list');
+            todoList.html('');
+            response.items.forEach(function (item) {
+              var taskHTML = '<li><span class="done">%</span>';
+              taskHTML += '<span class="edit">+</span>';
+              taskHTML += '<span class="delete">x</span>';
+              taskHTML += '<span class="task"></span>&nbsp;&nbsp;&nbsp;&nbsp;';
+              taskHTML += '<span class="user"></span>&nbsp;&nbsp;&nbsp;&nbsp;';
+              taskHTML += '<span class="itemId"></span></li>';
+              var $newTask = $(taskHTML);
+              $newTask.find('.task').text(item.task);
+              $newTask.find('.user').text(item.name);
+              $newTask.find('.itemId').text(item.id);
+              $newTask.hide();
+              $('#todo-list').prepend($newTask);
+              $newTask.show('clip', 250).effect('highlight', 1000);
+              var $itemId = $('.itemId');
+              $itemId.hide();
+            });
+          }
+        });
+      });    
+
       $('#edit-task').dialog({
         modal:true,
         autoOpen:false
