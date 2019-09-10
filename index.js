@@ -27,23 +27,7 @@ express()
     }
   })
   .post("/items", function(req, res) {
-    //res.send("You are in the API call");
-    //var newTask = req.body.task;
-    //var newName = req.body.name;
-    //res.send("second", newTask, newName);
-    //res.send("third", newName);
-    try {
-      const client = await pool.connect();
-      const result = await client.query("INSERT INTO todo(item, username, status) VALUES('Sell Car','Armaan', '0');");
-      //const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
-      //res.render("db", results);
-      const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
-      res.send("You are in the API call");
-      client.release();
-    } catch (err) {
-      console.error(err);
-      res.send("Error " + err);
-    }
+    res.send("You are in the API call" + req.bodyParser.task + " " + req.bodyParser.name);
   })
   //INSERT INTO todo(item, username, status) VALUES('something','Armaan', '0');
   // Implement appropriate database calls for each API function of your RESTful web service.

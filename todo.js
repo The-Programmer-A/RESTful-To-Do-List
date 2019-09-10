@@ -37,7 +37,6 @@ $(document).ready(function(e) {
               console.log(response);
             }
           });
-
           $('#task').val("");
           $('#user').val("");
           $(this).dialog('close');
