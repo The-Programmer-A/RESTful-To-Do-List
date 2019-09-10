@@ -33,6 +33,7 @@ $(document).ready(function(e) {
             contentType: 'application/json',
             data: JSON.stringify({ task: taskName, name: uName }),
             success: function (response) {
+              console.log('I think something happended' + taskName + " " + uName);
               console.log(response);
             }
           });

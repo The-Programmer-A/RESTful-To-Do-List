@@ -25,8 +25,7 @@ express()
     }
   })
   .post("/items", function(req, res) {
-    console.log("posting a task");
-    res.send("Successfully created item");
+    res.send("You are in the API call");
   })
   // Implement appropriate database calls for each API function of your RESTful web service.
   .get("/cool", (req, res) => res.send(cool()))
