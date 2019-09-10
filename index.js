@@ -27,11 +27,11 @@ express()
     }
   })
   .post("/items", function(req, res) {
-    res.send("You are in the API call");
+    //res.send("You are in the API call");
     var newTask = req.body.task;
     var newName = req.body.name;
-    res.send("second", newTask);
-    res.send("third", newName);
+    res.send("second", newTask, newName);
+    //res.send("third", newName);
     // try {
     //   const client = await pool.connect();
     //   const result = await client.query("SELECT * FROM todo;");
