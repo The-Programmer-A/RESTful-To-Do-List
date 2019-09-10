@@ -33,7 +33,7 @@ express()
     try {
       const client = await pool.connect();
       const result = await client.query("SELECT * FROM todo;");
-      const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
+      //const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
       //res.render("db", results);
       res.send("first", results);
       res.send("second", newTask);
