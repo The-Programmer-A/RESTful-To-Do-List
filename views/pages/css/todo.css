@@ -81,7 +81,7 @@ form p {
 label {
   width: 30%;
   float: left;
-  display: inline-block; }
+  display: block; }
 
 /* list styles */
 #todo-list, #completed-list {
