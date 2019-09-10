@@ -28,6 +28,7 @@ express()
     }
   })
   .post("/items", function(req, res) {
+    console.log('here were working');
     //res.send("You are in the API call" + req.body.task + " " + req.body.name);
     try {
       //const client = await pool.connect();
