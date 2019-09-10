@@ -13,11 +13,11 @@ express()
   .use(express.static(path.join(__dirname, 'public')))
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
-  .get('/', (req, res) => res.render('pages/index'))
+  .get('/', (req, res) => res.render('pages/index')) //this should run my todo list application from assignment 1
   .get('/db', async (req, res) => { // get all items in todo list
     try {
       const client = await pool.connect()
-      const result = await client.query('SELECT * FROM test_table');
+      const result = await client.query('SELECT * FROM todo');
       const results = { 'results': (result) ? result.rows : null}; //else { return res.send('No Data Found')}
       res.render('pages/db', results );
       client.release();
