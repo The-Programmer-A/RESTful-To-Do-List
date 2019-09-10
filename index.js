@@ -12,9 +12,9 @@ const PORT = process.env.PORT || 5000
 
 express()
   .use(express.static(path.join(__dirname)))
-  .set('views', path.join(__dirname, 'views'))
-  .set('view engine', 'ejs')
-  .get('/', (req, res) => res.render('pages/index')) //this should run my todo list application from assignment 1
+  // .set('views', path.join(__dirname, 'views'))
+  // .set('view engine', 'ejs')
+  .get('/', (req, res) => res.render('index')) //this should run my todo list application from assignment 1
   .get('/db', async (req, res) => { // get all items in todo list
     try {
       const client = await pool.connect()
