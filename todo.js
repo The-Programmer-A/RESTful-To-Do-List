@@ -1,12 +1,13 @@
 $(document).ready(function(e) {
 // Author: Armaan Chandra
 
+//functionality of the add-todo button. onclick it preforms new todo function
   $('#add-todo').button({
     icons: { primary: "ui-icon-circle-plus" }}).click(
       function() {
         $('#new-todo').dialog('open');
       });
-
+      //function of creating a new item
       $('#new-todo').dialog({
         modal : true, autoOpen : false,
         buttons : {
@@ -25,9 +26,20 @@ $(document).ready(function(e) {
           $newTask.hide();
           $('#todo-list').prepend($newTask);
           $newTask.show('clip',250).effect('highlight',1000);
-          $(this).dialog('close');
+          
+          $.ajax({
+            url: '/items',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ task: taskName, name: uName }),
+            success: function (response) {
+              console.log(response);
+            }
+          });
+
           $('#task').val("");
           $('#user').val("");
+          $(this).dialog('close');
         },
         "Cancel" : function () { $(this).dialog('close'); }
         }
@@ -57,6 +69,11 @@ $(document).ready(function(e) {
         buttons: {
           "Confirm": function(){
             $('#confirm-delete').data("select").parent('li').effect('puff', function() { $(this).remove(); });
+
+
+
+
+
             $(this).dialog('close');
           },
           "Cancel": function(){
@@ -73,7 +90,6 @@ $(document).ready(function(e) {
       $('.sortlist').on('click', '.edit', function() {
         var $taskItemEdit = $(this).parent('li'); //this gets the item from the parents list
         $('#edit-task').dialog('open');
-
 
         $('#taskEdit').val($taskItemEdit.find('.task').text());
         $('#usernameEdit').val($taskItemEdit.find('.user').text());
