@@ -27,7 +27,17 @@ express()
     }
   })
   .post("/items", function(req, res) {
-    res.send("You are in the API call" + req.body.task + " " + req.body.name);
+    //res.send("You are in the API call" + req.body.task + " " + req.body.name);
+    try {
+      const client = await pool.connect();
+      const result = await client.query("INSERT INTO todo(item, username, status) VALUES('work','Armaan', '0');");
+      const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
+      res.render("db", results);
+      client.release();
+    } catch (err) {
+      console.error(err);
+      res.send("Error " + err);
+    }
   })
   //INSERT INTO todo(item, username, status) VALUES('something','Armaan', '0');
   // Implement appropriate database calls for each API function of your RESTful web service.
