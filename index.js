@@ -38,7 +38,7 @@ express()
       //const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
       //res.render("db", results);
       const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
-      res.render("db", results);
+      res.send("You are in the API call");
       client.release();
     } catch (err) {
       console.error(err);
