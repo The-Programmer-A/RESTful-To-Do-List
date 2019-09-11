@@ -3,7 +3,6 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
 });
-const cool = require("cool-ascii-faces");
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -77,5 +76,35 @@ express()
       res.send("Error " + err);
     }
   })
-  .get("/cool", (req, res) => res.send(cool()))
+  .patch("/updateStatus", async function(req, res) {
+    var doneTask = req.body.task;
+    var doneUser = req.body.name;
+    var changeStatus = req.body.status;    
+    console.log("doneTask = " + doneTask);
+    console.log("doneUser = " + doneUser);
+    console.log("changeStatus = " + changeStatus);
+    try {
+      const client = await pool.connect(); 
+      const result = await client.query(`UPDATE todo SET status = '${changeStatus}' WHERE item = '${doneTask}' AND username = '${doneUser}' returning *`);
+      const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
+      res.send(results);
+      client.release();
+    } catch (err) {
+      console.error(err);
+      res.send("Error " + err);
+    }
+  })
+  .get("/itemsCompleted", async function(req, res) {
+   try {
+      const client = await pool.connect();
+      const result = await client.query("SELECT * FROM todo WHERE status = 'Completed'");
+      const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
+      //console.log(results); //see what im getting
+      res.send(results);
+      client.release();
+    } catch (err) {
+      console.error(err);
+      res.send("Error " + err);
+    }
+  })
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
