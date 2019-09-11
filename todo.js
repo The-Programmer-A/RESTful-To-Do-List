@@ -1,6 +1,33 @@
 $(document).ready(function(e) {
 // Author: Armaan Chandra
 
+//get from the database and show results on start up
+//will need to evaluate the status of the record 
+$.ajax({
+  url: '/items',
+  method: 'GET',
+  contentType: 'application/json',
+  success: function (response) {
+    console.log(response);
+    var todoList = $('todo-list');
+    todoList.html('');
+    response.results.forEach(element => {
+      var taskHTML = '<li><span class="done">%</span>';
+      taskHTML += '<span class="delete">x</span>';
+      taskHTML += '<span class="edit">+</span>'
+      taskHTML += '<span class="task"></span>';
+      taskHTML += '<span class="user"></span></li>';
+      var $newTask = $(taskHTML);
+      $newTask.find('.task').text(element.item); 
+      $newTask.find('.user').text(element.username); 
+      $newTask.hide();
+      $('#todo-list').prepend($newTask);
+      $newTask.show('clip',250).effect('highlight',1000);
+    });
+  }
+});
+
+
 //functionality of the add-todo button. onclick it preforms new todo function
   $('#add-todo').button({
     icons: { primary: "ui-icon-circle-plus" }}).click(
@@ -12,32 +39,40 @@ $(document).ready(function(e) {
         modal : true, autoOpen : false,
         buttons : {
           "Add task" : function () {
-          var taskName = $('#task').val();
-          var uName = $('#user').val();
-          if (taskName === "") { return false; }
-          var taskHTML = '<li><span class="done">%</span>';
-          taskHTML += '<span class="delete">x</span>';
-          taskHTML += '<span class="edit">+</span>'
-          taskHTML += '<span class="task"></span>';
-          taskHTML += '<span class="user"></span></li>';
-          var $newTask = $(taskHTML);
-          $newTask.find('.task').text(taskName);
-          $newTask.find('.user').text(uName);
-          $newTask.hide();
-          $('#todo-list').prepend($newTask);
-          $newTask.show('clip',250).effect('highlight',1000);
-          //send the task and the user 
-          $.ajax({
-            url: '/items',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ task: taskName, name: uName }),
-            success: function (response) {
-              console.log('I think something happended: ' + taskName + " " + uName);
-              console.log(response);
-            }
-          });
+            //creating the new objects from UI and prepending them to todo-list
+            var taskName = $('#task').val();
+            var uName = $('#user').val();
+            if (taskName === "") { return false; }
 
+            $.ajax({
+              url: '/items',
+              method: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify({ task: taskName, name: uName }),   //send the task and the user 
+              success: function (response) {
+                console.log(response);
+                var taskHTML = '<li><span class="done">%</span>';
+                taskHTML += '<span class="delete">x</span>';
+                taskHTML += '<span class="edit">+</span>'
+                taskHTML += '<span class="task"></span>';
+                taskHTML += '<span class="user"></span></li>';
+                var $newTask = $(taskHTML);
+                $newTask.find('.task').text(taskName);
+                $newTask.find('.user').text(uName);
+                $newTask.hide();
+                //add the new item to the list
+                $.ajax({
+                  url: '/items',
+                  method: 'GET',
+                  contentType: 'application/json',
+                  success: function (response) {
+                    console.log(response);
+                    $('#todo-list').prepend($newTask);
+                    $newTask.show('clip',250).effect('highlight',1000);
+                  }
+                });
+              }
+            });
           $('#task').val("");
           $('#user').val("");
           $(this).dialog('close');
@@ -46,14 +81,25 @@ $(document).ready(function(e) {
         }
       });
 
+      //make the todo list sortable. Moving to the completed list
       $('#todo-list').on('click', '.done', function() {
         var $taskItem = $(this).parent('li');
         $taskItem.slideUp(250, function() {
           var $this = $(this);
           $this.detach();
-          $('#completed-list').prepend($this);
+          //add to the completed list
+          $('#completed-list').prepend($this); 
+          //patch the status to be completed.
+          //on the get requrest to show all. have a statement that evaluates the status and adds to the 
+          //correct list based on the status. 
+        
+          //make the object un-editable
           $this.slideDown();
         });
+        var taskDone = $taskItem.find('.task').text();
+        var usernameDone = $taskItem.find('.user').text();
+        console.log(taskDone);
+        console.log(usernameDone);
       });
 
       $('.sortlist').sortable({
@@ -69,12 +115,7 @@ $(document).ready(function(e) {
         autoOpen : false,
         buttons: {
           "Confirm": function(){
-            $('#confirm-delete').data("select").parent('li').effect('puff', function() { $(this).remove(); });
-
-
-
-
-
+            $('#confirm-delete').data("select").parent('li').effect('puff', function() { $(this).remove();});
             $(this).dialog('close');
           },
           "Cancel": function(){
@@ -83,7 +124,20 @@ $(document).ready(function(e) {
         }
       });
 
+      //pop up confirmation of deletion
       $('.sortlist').on('click','.delete',function() {
+        var $taskItemDel = $(this).parent('li');
+        var taskDelete = $taskItemDel.find('.task').text();
+        var usernameDelete = $taskItemDel.find('.user').text();
+        $.ajax({
+          url: '/deleteItems',
+          method: 'DELETE',
+          contentType: 'application/json',
+          data: JSON.stringify({ task: taskDelete, name: usernameDelete }),   //need to get the current task and username
+          success: function (response) {
+            console.log('Deleted Item' + response);
+          }
+        });
         $('#confirm-delete').data("select", $(this)).dialog('open');
       });
 
@@ -94,20 +148,35 @@ $(document).ready(function(e) {
 
         $('#taskEdit').val($taskItemEdit.find('.task').text());
         $('#usernameEdit').val($taskItemEdit.find('.user').text());
+
+        var oldTask = $taskItemEdit.find('.task').text();
+        var oldUser = $taskItemEdit.find('.user').text();
+
         $('#edit-task').dialog({
           buttons: {
             "Confirm": function (){
-              var taskName = $('#taskEdit').val();
-              var uName = $('#usernameEdit').val();
+              var newTask = $('#taskEdit').val();
+              var newUsername = $('#usernameEdit').val();
               //if input is empty, exit function
-              if (taskName === '') {
+              if (newTask === '') {
                 return false;
               }
-              //get current values and modify
-              $taskItemEdit.find('.task').text(taskName);
-              $taskItemEdit.find('.user').text(uName);
-              $('#taskEdit').val(taskName);
-              $('#usernameEdit').val(uName);
+
+              $taskItemEdit.find('.task').text(newTask);
+              $taskItemEdit.find('.user').text(newUsername);
+              $('#taskEdit').val(newTask);
+              $('#usernameEdit').val(newUsername);
+
+              // ajax call to update entries in the database
+              $.ajax({
+                url: '/updateItems',
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify({ oldTask: oldTask, oldName: oldUser, newTask: newTask, newName: newUsername }),   //need to get the current task and username
+                success: function (response) {
+                  console.log('Updated Item' + response);
+                }
+              });
               $(this).dialog('close');
             },
             "Cancel": function() {
@@ -116,36 +185,6 @@ $(document).ready(function(e) {
           }
         });
       });
-
-      $('#get-button').on('click', function () {
-        $.ajax({
-          url: '/items',
-          method: 'GET',
-          contentType: 'application/json',
-          success: function (response) {
-            console.log(response);
-            var todoList = $('#todo-list');
-            todoList.html('');
-            response.items.forEach(function (item) {
-              var taskHTML = '<li><span class="done">%</span>';
-              taskHTML += '<span class="edit">+</span>';
-              taskHTML += '<span class="delete">x</span>';
-              taskHTML += '<span class="task"></span>&nbsp;&nbsp;&nbsp;&nbsp;';
-              taskHTML += '<span class="user"></span>&nbsp;&nbsp;&nbsp;&nbsp;';
-              taskHTML += '<span class="itemId"></span></li>';
-              var $newTask = $(taskHTML);
-              $newTask.find('.task').text(item.task);
-              $newTask.find('.user').text(item.name);
-              $newTask.find('.itemId').text(item.id);
-              $newTask.hide();
-              $('#todo-list').prepend($newTask);
-              $newTask.show('clip', 250).effect('highlight', 1000);
-              var $itemId = $('.itemId');
-              $itemId.hide();
-            });
-          }
-        });
-      });    
 
       $('#edit-task').dialog({
         modal:true,

@@ -5,6 +5,7 @@ const pool = new Pool({
 });
 const cool = require("cool-ascii-faces");
 const express = require("express");
+const app = express();
 const path = require("path");
 var bodyParser = require('body-parser');
 const PORT = process.env.PORT || 5000;
@@ -19,7 +20,7 @@ express()
       const client = await pool.connect();
       const result = await client.query("SELECT * FROM todo");
       const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
-      //res.render("db", results);
+      //console.log(results); //see what im getting
       res.send(results);
       client.release();
     } catch (err) {
@@ -27,22 +28,54 @@ express()
       res.send("Error " + err);
     }
   })
-  .post("/items", function(req, res) {
-    console.log('here were working');
-    //res.send("You are in the API call" + req.body.task + " " + req.body.name);
+  .post("/items", async function(req, res) {
+    var newTask = req.body.task;
+    var newName = req.body.name;
     try {
-      //const client = await pool.connect();
-      res.send("You are in the API call" + req.body.task + " " + req.body.name);  
-      //const result = await client.query("SELECT * FROM todo");
-      //const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
-      //res.render("db", results);
-      //client.release();
+      const client = await pool.connect();
+      //res.send("You are in the API call" + req.body.task + " " + req.body.name);  
+      const result = await client.query(`INSERT INTO todo(item, username, status) VALUES('${newTask}','${newName}','incomplete') returning *`);
+      const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
+      if(results === null){
+        res.sendStatus(404);
+        //res.status(200).send();
+      }
+      res.send(results);
+      client.release();
     } catch (err) {
       console.error(err);
       res.send("Error " + err);
     }
   })
-  //INSERT INTO todo(item, username, status) VALUES('something','Armaan', '0');
-  // Implement appropriate database calls for each API function of your RESTful web service.
+  .delete("/deleteItems", async function(req, res) {
+    var deleteTask = req.body.task;
+    var deleteUsername = req.body.name;
+    try {
+      const client = await pool.connect(); 
+      const result = await client.query(`DELETE FROM todo WHERE item = '${deleteTask}' AND username = '${deleteUsername}' returning *`);
+      const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
+      res.send(results);
+      client.release();
+    } catch (err) {
+      console.error(err);
+      res.send("Error " + err);
+    }
+  })
+  .put("/updateItems", async function(req, res) {
+    var oldT = req.body.oldTask;
+    var oldN = req.body.oldName;
+    var newT = req.body.newTask;
+    var newN = req.body.newName;
+    try {
+      const client = await pool.connect(); 
+      const result = await client.query(`UPDATE todo SET item = '${newT}', username = '${newN}' WHERE item = '${oldT}' AND username = '${oldN}' returning *`);
+      const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
+      res.send(results);
+      client.release();
+    } catch (err) {
+      console.error(err);
+      res.send("Error " + err);
+    }
+  })
   .get("/cool", (req, res) => res.send(cool()))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
