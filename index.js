@@ -41,8 +41,7 @@ express()
       if(results === null){ 
         res.status(400).send();
       }
-      //res.status(200).send();
-      res.send(results);
+      res.status(200).send(result);
       client.release();
     } catch (err) {
       console.error(err);
