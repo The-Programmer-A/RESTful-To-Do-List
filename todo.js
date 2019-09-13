@@ -7,7 +7,7 @@ $(document).ready(function(e) {
     method: "GET",
     contentType: "application/json",
     success: function(response) {
-      console.log(response);
+      console.log("GET Incomplete " + response.status);
       var todoList = $("todo-list");
       todoList.html("");
       response.results.forEach(element => {
@@ -35,7 +35,7 @@ $(document).ready(function(e) {
     method: "GET",
     contentType: "application/json",
     success: function(response) {
-      console.log(response);
+      console.log("GET Completed " + response.status);
       var todoList = $("todo-list");
       todoList.html("");
       response.results.forEach(element => {
@@ -80,7 +80,7 @@ $(document).ready(function(e) {
           contentType: "application/json",
           data: JSON.stringify({ task: taskName, name: uName }), //send the task and the user
           success: function(response) {
-            console.log(response);
+            console.log("POST Response " + response.status);
             var taskHTML = '<li><span class="done">%</span>';
             taskHTML += '<span class="delete">x</span>';
             taskHTML += '<span class="edit">+</span>';
@@ -96,7 +96,7 @@ $(document).ready(function(e) {
               method: "GET",
               contentType: "application/json",
               success: function(response) {
-                console.log(response);
+                console.log("POST New Task " + response.status);
                 $("#todo-list").prepend($newTask);
                 $newTask.show("clip", 250).effect("highlight", 1000);
               }
@@ -137,10 +137,7 @@ $(document).ready(function(e) {
         status: "Completed"
       }),
       success: function(response) {
-        console.log(response);
-        //the response is an array containing the updated task (now status = completed)
-        //create a new htmlObject (without an edit button)
-        //append that object to the completed list
+        console.log("PATCH " + response.status);
         var taskHTML = '<li><span class="done">%</span>';
         taskHTML += '<span class="delete">x</span>';
         taskHTML += '<span class="task"></span>';
@@ -155,12 +152,11 @@ $(document).ready(function(e) {
           method: "GET",
           contentType: "application/json",
           success: function(response) {
-            console.log(response);
+            console.log("GET New Completed " + response.status);
             $("#completed-list").prepend($newTask);
             $newTask.show("clip", 250).effect("highlight", 1000);
           }
         });
-        //in the initial get method that displays - evaluate status. if completed - prepend to completed list
       }
     });
   });
@@ -204,7 +200,7 @@ $(document).ready(function(e) {
       contentType: "application/json",
       data: JSON.stringify({ task: taskDelete, name: usernameDelete }), //need to get the current task and username
       success: function(response) {
-        console.log("Deleted Item");
+        console.log("Deleted Item " + response.status);
       }
     });
     $("#confirm-delete")
@@ -250,7 +246,7 @@ $(document).ready(function(e) {
               newName: newUsername
             }), //need to get the current task and username
             success: function(response) {
-              console.log("Updated Item" + response);
+              console.log("Updated Item " + response.status);
             }
           });
           $(this).dialog("close");
