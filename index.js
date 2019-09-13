@@ -42,7 +42,7 @@ express()
         res.status(400).send();
       }
       //res.status(200).send();
-      res.send(results, res.status(200));
+      res.send(results);
       client.release();
     } catch (err) {
       console.error(err);
@@ -59,6 +59,7 @@ express()
       if(results === null){
         res.status(400).send;
       }
+      res.status(200).send();
       res.send(results);
       client.release();
     } catch (err) {
