@@ -1,5 +1,5 @@
 $(document).ready(function(e) {
-  // Author: Armaan Chandra
+  // Author: Armaan Chandra 
 
   //get from the database and show results on start up
   $.ajax({
@@ -10,6 +10,7 @@ $(document).ready(function(e) {
       var todoList = $("todo-list");
       todoList.html("");
       response.results.forEach(element => {
+        console.log(element);
         //evaluate the status. Don't render completed status.
         if(element.status == "Completed"){
           return;
@@ -34,6 +35,7 @@ $(document).ready(function(e) {
     method: "GET",
     contentType: "application/json",
     success: function(response) {
+      console.log(response);
       var todoList = $("todo-list");
       todoList.html("");
       response.results.forEach(element => {
@@ -109,6 +111,13 @@ $(document).ready(function(e) {
     }
   });
 
+  $(".sortlist").sortable({
+    connectWith: ".sortlist",
+    cursor: "pointer",
+    placeholder: "ui-state-highlight",
+    cancel: ".delete,.done,.edit"
+  });
+
   //make the todo list sortable. Moving to the completed list
   $("#todo-list").on("click", ".done", function() {
     var $taskItem = $(this).parent("li");
@@ -155,12 +164,7 @@ $(document).ready(function(e) {
     });
   });
 
-  $(".sortlist").sortable({
-    connectWith: ".sortlist",
-    cursor: "pointer",
-    placeholder: "ui-state-highlight",
-    cancel: ".delete,.done,.edit"
-  });
+
 
   //CONFIRM DELETE
   $("#confirm-delete").dialog({

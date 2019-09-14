@@ -8,7 +8,7 @@ const path = require("path");
 var bodyParser = require('body-parser');
 const PORT = process.env.PORT || 5000;
 
-express()
+express() 
   .use(express.static(path.join(__dirname)))
   .use(bodyParser.json())
   .get("/", (req, res) => res.render("index")) //this should run my todo list application from assignment 1
@@ -93,9 +93,6 @@ express()
     var doneUser = req.body.name;
     var changeStatus = req.body.status;
     try {
-      if(changeStatus != 'Incomplete' || changeStatus != 'Complete'){
-        res.status(400).send;
-      }
       const client = await pool.connect(); 
       const result = await client.query(`UPDATE todo SET status = '${changeStatus}' WHERE item = '${doneTask}' AND username = '${doneUser}' returning *`);
       const results = { results: result ? result.rows : null }; //else { return res.send('No Data Found')}
